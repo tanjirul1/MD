@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সোহেল সাউন্ড ও মোজাহের ডেকোরেটর</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root { --primary-color: #001f3f; --accent-color: #ffc107; --bg-light: #f4f7f6; --text-dark: #333; }
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: var(--bg-light); color: var(--text-dark); }
+        .header-section { background: linear-gradient(135deg, var(--primary-color), #004080); color: white; padding: 40px 20px; border-bottom: 6px solid var(--accent-color); border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .table-custom thead { background-color: var(--primary-color); color: white; }
+        .stat-card { padding: 20px; border-radius: 15px; text-align: center; color: white; }
+        .stat-income { background: #28a745; }
+        .stat-expense { background: #dc3545; }
+        .stat-net { background: #17a2b8; }
+        .stat-share { background: #6f42c1; }
+        .status-done { background-color: #d4edda !important; }
+        .p-history { font-size: 11px; color: #555; background: #eee; padding: 2px 4px; border-radius: 3px; display: block; margin-top: 2px; }
+        footer { background-color: var(--primary-color); color: white; padding: 20px 0; margin-top: 50px; }
+        @media print { .no-print { display: none !important; } .print-only { display: block !important; } .card { box-shadow: none; border: 1px solid #ddd; } }
+        .print-only { display: none; }
+        body.dark-mode { background-color: #1a1a1a; color: #eee; }
+        .dark-mode .card { background-color: #2d2d2d; color: #eee; }
+        .item-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .grid-box { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .grid-box label { font-weight: 600; margin-bottom: 0; }
+        .grid-box input { width: 80px !important; text-align: center; }
+
+
+        /* Chrome, Safari, Edge, Opera এর জন্য */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox এর জন্য */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+
+/* ডাটা সেভ মডালের জন্য এক্সক্লুসিভ স্টাইল */
+.custom-save-overlay {
+    display: none; /* শুরুতে বন্ধ থাকবে */
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* হালকা কালো ব্যাকগ্রাউন্ড */
+    z-index: 10000; /* সবার উপরে থাকবে */
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+}
+
+.custom-save-box {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    width: 280px; /* ছোট সাইজ */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.custom-save-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.custom-save-box p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* মডাল আসার অ্যানিমেশন */
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+
+.status-done {
+    background-color: #5ff4b1 !important; /* হালকা সবুজ */
+    color: #0d683d !important;
+}
+
+.status-done td {
+    background-color: transparent !important; /* যাতে পুরো রো কালার পায় */
+}
+
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    #printCustomer {
+        display: block !important;
+        border: 1px solid #eee;
+    }
+    /* টেবিল ডিজাইন */
+    .table-bordered th {
+        background-color: #663447  !important;
+        color: white !important;
+        border: 1px solid #001f3f !important;
+    }
+    .table-bordered td {
+        border: 1px solid #dee2e6 !important;
+    }
+}
+
+/* বিলের মাঝখানের টেবিল স্টাইল */
+#printContent table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-header-bg {
+    background: #003f0e !important;
+    color: white !important;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <header class="header-section text-center">
+        <h1 class="fw-bold mb-2">সোহেল সাউন্ড লাইটিং এ্যান্ড মোজাহের ডেকোরেটর</h1>
+        <p> আমাদের সেবাসমূহ:
+ এখানে বিয়ে, গায়ে হলুদ, জন্মদিনসহ সকল ধরনের সামাজিক ও ধর্মীয় অনুষ্ঠানের জন্য—
+
+ সাউন্ড সিস্টেম ও লাইটিং,
+
+ প্যান্ডেল ডেকোরেশন ও গেট সাজানো,
+
+ যে কোনো ইভেন্ট ম্যানেজমেন্ট-এর কাজ অত্যন্ত দক্ষতার সাথে করা হয়।
+
+ এছাড়াও ডেকোরেটরের যাবতীয় মালামাল ভাড়া দেওয়া হয়।</p>
+        <div class="d-flex justify-content-center flex-wrap gap-3 small">
+            <span><strong>পরিচালক: </strong> সোহেল খান
+(01752548687)</span>
+            <span>|</span>
+            <span><strong> ম্যানেজার:</strong> মোঃ তানজিরুল ইসলাম নাদিম
+(01885997553)</span>
+        </div>
+        <p class="mt-2 small opacity-50"> ঠিকানা:
+শেখ জহুরুল হক সুপার মার্কেট, সুইজ গেট রোড,
+উত্তর বাজার, কালিয়া, নড়াইল।</p>
+    </header>
+
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-md-6 d-flex gap-2">
+                <input type="month" id="monthFilter" class="form-control w-50" onchange="loadSystem()">
+                <button class="btn btn-outline-dark" onclick="toggleDarkMode()">ডার্ক মোড</button>
+               <button class="btn btn-outline-primary" onclick="downloadBackup()">ব্যাকআপ</button>
+            </div>
+            <div class="col-md-6 text-end">
+                  <button class="btn btn-warning fw-bold" onclick="printMonthlyReport()">রিপোর্ট প্রিন্ট</button>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><div class="stat-card stat-income"><h6>মোট আয়</h6><h3 id="dashIn">0৳</h3></div></div>
+            <div class="col-md-3"><div class="stat-card stat-expense"><h6>মোট খরচ</h6><h3 id="dashOut">0৳</h3></div></div>
+            <div class="col-md-3"><div class="stat-card stat-net"><h6>নিট লাভ</h6><h3 id="dashNet">0৳</h3></div></div>
+            <div class="col-md-3"><div class="stat-card stat-share"><h6>জনপ্রতি লাভ (২৫%)</h6><h3 id="dashShare">0৳</h3></div></div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card p-4">
+                    <h5 class="text-primary border-bottom pb-2 mb-3">নতুন কাস্টমার এন্ট্রি</h5>
+                    <div class="row g-2">
+                        <div class="col-6"><label class="small">তারিখ</label><input type="date" id="cDate" class="form-control"></div>
+                        <div class="col-6"><label class="small">নাম</label><input type="text" id="cName" class="form-control"></div>
+                        <div class="col-12"><label class="small">ঠিকানা ও মোবাইল</label><input type="text" id="cInfo" class="form-control" placeholder="ঠিকানা, মোবাইল"></div>
+                        <div class="col-12">
+                            <label class="small">মালামাল বিবরণ</label>
+                            <button type="button" class="btn btn-outline-dark w-100 fw-bold" data-bs-toggle="modal" data-bs-target="#itemModal">🛒 মালামাল যোগ করুন</button>
+                            <div id="selectedItemsPreview" class="mt-2 small text-muted"></div>
+                        </div>
+                        <div class="col-6"><label class="small">মোট ভাড়া</label><input type="number" id="vVara" class="form-control"></div>
+                        <div class="col-6"><label class="small">জমা</label><input type="number" id="vJoma" class="form-control"></div>
+                        <button class="btn btn-primary mt-3 w-100 fw-bold" onclick="saveCustomer()">ডাটা সেভ করুন</button>
+                        <div id="customSuccessModal" class="custom-save-overlay" onclick="closeSaveModal()">
+    <div class="custom-save-box">
+        <div class="custom-save-icon">✅</div>
+        <p>আপনার ডাটা সফলভাবে সেভ হয়েছে!</p>
+    </div>
+</div>
+                    </div>
+                </div>
+
+                <div class="card p-4">
+                    <h5 class="text-danger border-bottom pb-2 mb-3">খরচ এন্ট্রি</h5>
+                    <div class="row g-2">
+                        <div class="col-8">
+                            <select id="eCat" class="form-select">
+                                <option value="লেবার খরচ">লেবার খরচ</option>
+                                <option value="গাড়ি ভাড়া">গাড়ি ভাড়া</option>
+                                <option value="বিদ্যুৎ বিল">বিদ্যুৎ বিল</option>
+                                <option value="অন্যান্য">অন্যান্য</option>
+                            </select>
+                        </div>
+                        <div class="col-4"><input type="number" id="eAmt" class="form-control" placeholder="টাকা"></div>
+                        <button class="btn btn-danger mt-2 w-100" onclick="saveExpense()">খরচ যোগ করুন</button>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="small fw-bold"> মাসিক খরচের তালিকা:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered small text-center">
+                                <thead class="table-light"><tr><th>খাত</th><th>টাকা</th><th>অ্যাকশন</th></tr></thead>
+                                <tbody id="expenseListBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">মাস্টার লেজার</h5>
+                        <input type="text" id="searchBox" class="form-control w-25" placeholder="খুঁজুন..." onkeyup="renderTable()">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered table-custom text-center align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>SL</th>
+                                    <th>তারিখ ও কাস্টমার</th>
+                                    <th>মালের বিবরণ</th>
+                                    <th>টাকার হিসাব</th>
+                                    <th>অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledgerBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                  
+    <div class="row g-3 mt-2">
+    <div class="col-md-4">
+        <div class="card p-3 shadow-sm border-0" style="border-radius: 15px; background: #f8f9fa; min-height: 300px;">
+            <h5 class="mb-3" style="color: #001f3f; font-weight: bold;">💸 উত্তোলন এন্ট্রি</h5>
+            <div class="mb-3">
+                <label class="small fw-bold">পার্টনার নির্বাচন করুন</label>
+                <select id="withdrawPartner" class="form-control">
+                    <option value="0">সোহেল খান</option>
+                    <option value="1">তানজিরুল ইসলাম নাদিম</option>
+                    <option value="2">জিয়াউর রহমান</option>
+                    <option value="3">জিল্লুর রহমান</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="small fw-bold">উত্তোলনের পরিমাণ (৳)</label>
+                <input type="number" id="withdrawInput" class="form-control" placeholder="৳">
+            </div>
+            <button onclick="saveWithdraw()" class="btn btn-dark w-100 fw-bold">হিসাব আপডেট করুন</button>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card p-3 shadow-sm border-0" style="border-radius: 15px; min-height: 300px;">
+            <h5 class="text-center mb-3" style="color: #001f3f; font-weight: bold;">📊 পার্টনার লভ্যাংশ রিপোর্ট (মাসিক)</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover text-center align-middle" style="font-size: 13px;">
+                    <thead style="background: #001f3f; color: #fff;">
+                        <tr>
+                            <th class="text-start">নাম ও পদবী</th>
+                            <th>লভ্যাংশ (২৫%)</th>
+                            <th>মোট উত্তোলন</th>
+                            <th>নিট পাওনা</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partnerTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0" style="border-radius: 15px;">
+            <div class="card-header bg-secondary text-white fw-bold d-flex justify-content-between align-items-center">
+                <span>📜 বিস্তারিত উত্তোলন লেজার (মাস ভিত্তিক হিস্ট্রি)</span>
+                <small id="ledgerMonthLabel" class="badge bg-light text-dark"></small>
+            </div>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-sm table-bordered text-center align-middle mb-0" style="font-size: 14px;">
+                    <thead class="table-light">
+                        <tr>
+                            <th>তারিখ</th>
+                            <th>পার্টনারের নাম</th>
+                            <th>উত্তোলনের পরিমাণ</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawLedgerBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center no-print">
+        <div class="container">
+            <p class="mb-1">©২০২৬ সোহেল সাউন্ড লাইটিং এ্যান্ড মোজাহের ডেকোরেটর। সকল স্বত্ব সংরক্ষিত।</p>
+            <p class="small opacity-75">সিস্টেম ডিজাইন ও ডেভেলপমেন্ট: মোঃ তানজিরুল ইসলাম নাদিম</p>
+        </div>
+    </footer>
+</div>
+
+<div class="modal fade" id="editLedgerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white"><h5>তথ্য আপডেট করুন</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <div class="mb-2"><label class="small">কাস্টমার নোট (গায়ে হলুদ/বিয়ে ইত্যাদি)</label><input type="text" id="editCustNote" class="form-control"></div>
+                <div class="mb-2"><label class="small">মালের বিবরণ এডিট</label><textarea id="editItemDesc" class="form-control" rows="2"></textarea></div>
+                <div class="mb-2"><label class="small">মাল সংক্রান্ত নোট (হারানো/ছেঁড়া/নতুুন)</label><input type="text" id="editItemNote" class="form-control"></div>
+                <hr>
+                <div class="row g-2">
+                    <div class="col-6"><label class="small">কন্ট্রাক্ট ভাড়া (edit)</label><input type="number" id="editVara" class="form-control"></div>
+                    <div class="col-6"><label class="small">নতুন জমা (বাকি পরিশোধ)</label><input type="number" id="addNewJoma" class="form-control" placeholder="টাকা"></div>
+                    <div class="col-6"><label class="small">ডিসকাউন্ট (-)</label><input type="number" id="editDisc" class="form-control"></div>
+                    <div class="col-6"><label class="small">এক্সট্রা বিল (+)</label><input type="number" id="editExtra" class="form-control"></div>
+                    <div class="col-12"><label class="small">হিসাব নোট / অ্যাকশন নোট</label><input type="text" id="editActionNote" class="form-control"></div>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-success w-100" onclick="updateLedgerEntry()">আপডেট সেভ করুন</button></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="itemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white"><h5>মালামাল তালিকা</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div id="item-grid-container" class="item-grid">
+                    <div class="grid-box"><label>ডেক</label><input type="number" class="form-control item-qty" data-name="ডেক"></div>
+                    <div class="grid-box"><label>গাবলা</label><input type="number" class="form-control item-qty" data-name="গাবলা"></div>
+                    <div class="grid-box"><label>কড়াই</label><input type="number" class="form-control item-qty" data-name="কড়াই"></div>
+                    <div class="grid-box"><label>চামচ</label><input type="number" class="form-control item-qty" data-name="চামচ"></div>
+                    <div class="grid-box"><label>সসপ্যান</label><input type="number" class="form-control item-qty" data-name="সসপ্যান"></div>
+                    <div class="grid-box"><label>টেবিল</label><input type="number" class="form-control item-qty" data-name="টেবিল"></div>
+                    <div class="grid-box"><label>চেয়ার</label><input type="number" class="form-control item-qty" data-name="চেয়ার"></div>
+                    <div class="grid-box"><label>সাউন্ড</label><input type="number" class="form-control item-qty" data-name="সাউন্ড"></div>
+                </div>
+                
+                <div class="mt-4 p-3 border-top bg-light">
+                    <h6>অন্যান্য আইটেম যোগ করুন:</h6>
+                    <div class="input-group">
+                        <input type="text" id="customItemName" class="form-control" placeholder="আইটেমের নাম (উদা: গ্লাস)">
+                        <input type="number" id="customItemQty" class="form-control" placeholder="সংখ্যা">
+                        <button class="btn btn-dark" type="button" onclick="addNewItemToGrid()">যোগ করুন</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-primary" onclick="confirmItems()" data-bs-dismiss="modal">কনফার্ম</button></div>
+        </div>
+    </div>
+</div>
+
+<div id="printCustomer" class="print-only p-0" style="font-family: 'Hind Siliguri', sans-serif; background: #fff;">
+    <div style="background: linear-gradient(135deg, #259094 0%, #004080 100%); color: white; padding: 30px; position: relative; overflow: hidden;">
+        <div style="position: relative; z-index: 2;">
+            <h1 style="font-size: 32px; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 1px;">সোহেল সাউন্ড লাইটিং এ্যান্ড মোজাহের ডেকোরেটর</h1>
+            <p style="font-size: 15px; margin: 10px 0; opacity: 0.9;">আমাদের সেবাসমূহ: এখানে বিয়ে, গায়ে হলুদ, জন্মদিনসহ সকল ধরনের সামাজিক ও ধর্মীয় অনুষ্ঠানের জন্য— সাউন্ড সিস্টেম ও লাইটিং, প্যান্ডেল ডেকোরেশন ও গেট সাজানো হয়, যে কোনো ইভেন্ট ম্যানেজমেন্ট-এর কাজ অত্যন্ত দক্ষতার সাথে করা হয়। এছাড়াও ডেকোরেটরের যাবতীয় মালামাল ভাড়া দেওয়া হয়।</p>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; font-size: 14px; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+                <span><strong>পরিচালক:</strong> সোহেল খান (01752548687)</span>
+                <span><strong>ম্যানেজার:</strong> মোঃ তানজিরুল ইসলাম নাদিম (01885997553)</span>
+            </div>
+        </div>
+        <div style="position: absolute; right: -20px; top: -20px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+    </div>
+
+    <div style="background: #f8f9fa; padding: 10px; text-align: center; border-bottom: 3px solid #ffcc00; font-size: 13px;">
+         শেখ জহুরুল হক সুপার মার্কেট, সুইজ গেট রোড, উত্তর বাজার, কালিয়া, নড়াইল।
+    </div>
+
+    <div class="p-4">
+        <div class="text-end mb-4">
+            <h2 style="color: #001f3f; border-bottom: 2px solid #001f3f; display: inline-block; padding-bottom: 5px;">ইনভয়েস / বিল</h2>
+        </div>
+
+        <div id="printContent">
+            </div>
+
+        <div class="mt-5 pt-4">
+            <div class="d-flex justify-content-between mb-5 px-4">
+                <div class="text-center" style="width: 180px;">
+                    <div style="border-top: 2px solid #001f3f; padding-top: 5px; font-weight: bold; color: #001f3f;">কাস্টমার স্বাক্ষর</div>
+                </div>
+                <div class="text-center" style="width: 180px;">
+                    <div style="border-top: 2px solid #001f3f; padding-top: 5px; font-weight: bold; color: #001f3f;">ম্যানেজারের স্বাক্ষর</div>
+                </div>
+            </div>
+
+            <div style="background: #084552; color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center; margin-top: 50px;">
+                <h4 style="font-style: italic; margin-bottom: 5px; color: #63f057;">"উৎসবের প্রতিটি মুহূর্ত হোক আনন্দময়"</h4>
+                <p style="margin: 0; font-weight: bold; letter-spacing: 1px;">"ধন্যবাদ, আবার আসবেন।"</p>
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const DB_KEY = "sohel_manager_final";
+    let data = JSON.parse(localStorage.getItem(DB_KEY)) || { customers: [], expenses: [] };
+    let tempItemString = "";
+    let incomeChart, shareChart;
+
+    function saveToLocal() { localStorage.setItem(DB_KEY, JSON.stringify(data)); loadSystem(); }
+
+    // নতুন আইটেম গ্রিডে যোগ করার ফাংশন
+    function addNewItemToGrid() {
+        const nameInput = document.getElementById('customItemName');
+        const qtyInput = document.getElementById('customItemQty');
+        const grid = document.getElementById('item-grid-container');
+
+        const name = nameInput.value.trim();
+        const qty = qtyInput.value;
+
+        if (name === "" || qty === "") {
+            alert("আইটেমের নাম এবং সংখ্যা লিখুন!");
+            return;
+        }
+
+        const newDiv = document.createElement('div');
+        newDiv.className = 'grid-box';
+        newDiv.innerHTML = `<label>${name}</label><input type="number" class="form-control item-qty" data-name="${name}" value="${qty}">`;
+        grid.appendChild(newDiv);
+
+        nameInput.value = "";
+        qtyInput.value = "";
+    }
+
+    function confirmItems() {
+        let items = [];
+        document.querySelectorAll('.item-qty').forEach(input => { 
+            if(input.value > 0) items.push(`${input.dataset.name} (${input.value})`); 
+        });
+        tempItemString = items.join(', ');
+        document.getElementById('selectedItemsPreview').innerText = "নির্বাচিত: " + tempItemString;
+    }
+
+   // ১. ডাটা সেভ করার ফাংশনটি আপডেট করুন
+function saveCustomer() {
+    const initialJoma = Number(document.getElementById('vJoma').value) || 0;
+    const entry = {
+        id: Date.now(),
+        date: document.getElementById('cDate').value || new Date().toISOString().split('T')[0],
+        name: document.getElementById('cName').value || "অজানা",
+        info: document.getElementById('cInfo').value,
+        custNote: "", 
+        item: tempItemString || "মালামাল উল্লেখ নেই",
+        itemNote: "",
+        vara: Number(document.getElementById('vVara').value) || 0,
+        jomaHistory: initialJoma > 0 ? [{amt: initialJoma, date: new Date().toLocaleDateString('en-GB')}] : [],
+        disc: 0,
+        extra: 0,
+        actionNote: "",
+        status: 'Pending'
+    };
+
+    data.customers.push(entry);
+    
+    // ডাটা সেভ করা এবং টেবিল আপডেট করা
+    localStorage.setItem(DB_KEY, JSON.stringify(data)); 
+    loadSystem(); // টেবিল সাথে সাথে আপডেট হবে
+    resetForms(); // ইনপুট বক্স খালি হবে
+
+    // নতুন মডালটি দেখানো
+    document.getElementById('customSuccessModal').style.display = 'flex';
+}
+
+// ২. মডাল বন্ধ করার ফাংশন (যেকোনো জায়গায় ক্লিক করলে)
+function closeSaveModal() {
+    document.getElementById('customSuccessModal').style.display = 'none';
+}
+
+// ৩. কিবোর্ড প্রেস করলে মডাল বন্ধ করার লজিক
+window.addEventListener('keydown', function() {
+    if (document.getElementById('customSuccessModal').style.display === 'flex') {
+        closeSaveModal();
+    }
+});
+    function resetForms() {
+        ['cName', 'cInfo', 'vVara', 'vJoma'].forEach(id => document.getElementById(id).value = '');
+        // গ্রিড রিসেট করা (ফিক্সডগুলো বাদে বাকিগুলো সরিয়ে ফেলা চাইলে কোড আপডেট করতে হবে, বর্তমানে শুধু ভ্যালু মুছবে)
+        document.querySelectorAll('.item-qty').forEach(i => i.value = '');
+        tempItemString = "";
+        document.getElementById('selectedItemsPreview').innerText = "";
+    }
+
+    function saveExpense() {
+        const exp = { id: Date.now(), month: document.getElementById('monthFilter').value, cat: document.getElementById('eCat').value, amt: Number(document.getElementById('eAmt').value) || 0 };
+        data.expenses.push(exp);
+        saveToLocal();
+        document.getElementById('eAmt').value = '';
+    }
+
+    function renderTable() {
+        const filterMonth = document.getElementById('monthFilter').value;
+        const search = document.getElementById('searchBox').value.toLowerCase();
+        const body = document.getElementById('ledgerBody');
+        body.innerHTML = '';
+        let tIn = 0;
+        
+        data.customers.filter(c => c.date.startsWith(filterMonth)).forEach((c, i) => {
+            if(c.name.toLowerCase().includes(search) || c.info.toLowerCase().includes(search)) {
+                let totalJoma = c.jomaHistory.reduce((sum, h) => sum + h.amt, 0);
+                let netBill = (c.vara + (c.extra || 0)) - (c.disc || 0);
+                let due = netBill - totalJoma;
+                tIn += totalJoma;
+
+                let historyHtml = c.jomaHistory.map(h => `<span class="p-history">${h.date}: ${h.amt}৳</span>`).join('');
+
+                body.innerHTML += `
+                    <tr class="${c.status === 'Done' ? 'status-done' : ''}">
+                        <td>${i+1}</td>
+                        <td class="text-start">
+                            <b>${c.name}</b><br><small>${c.date}<br>${c.info}</small><br>
+                            <span class="badge bg-info text-dark">${c.custNote || 'নোট...'}</span>
+                        </td>
+                        <td class="text-start small">
+                            ${c.item}<br>
+                            <small class="text-danger">নোট: ${c.itemNote || '-'}</small>
+                        </td>
+                        <td class="text-start small">
+                            ভাড়া: ${c.vara} | ডিসাউন্ট: ${c.disc || 0} | এক্সট্রা: ${c.extra || 0}<br>
+                            জমা: <b>${totalJoma}৳</b> ${historyHtml}
+                            <b class="text-danger d-block">বাকি: ${due}৳</b>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm mb-1">
+                                <button class="btn btn-warning" onclick="openEdit(${c.id})">এডিট</button>
+                                <button class="btn btn-success" onclick="toggleDone(${c.id})">Done</button>
+                                <button class="btn btn-info text-white" onclick="printInv(${c.id})">প্রিন্ট</button>
+                                <button class="btn btn-danger" onclick="deleteCust(${c.id})">ডিলিট</button>
+                            </div><br>
+                            <small class="badge bg-secondary">${c.actionNote || ''}</small>
+                        </td>
+                    </tr>`;
+            }
+        });
+        calculateStats(tIn, filterMonth);
+        renderExpenseTable();
+    }
+
+
+    function openEdit(id) {
+        const c = data.customers.find(x => x.id === id);
+        document.getElementById('editId').value = id;
+        document.getElementById('editCustNote').value = c.custNote || "";
+        document.getElementById('editItemDesc').value = c.item;
+        document.getElementById('editItemNote').value = c.itemNote || "";
+        document.getElementById('editVara').value = c.vara;
+        document.getElementById('editDisc').value = c.disc || 0;
+        document.getElementById('editExtra').value = c.extra || 0;
+        document.getElementById('editActionNote').value = c.actionNote || "";
+        document.getElementById('addNewJoma').value = "";
+        new bootstrap.Modal(document.getElementById('editLedgerModal')).show();
+    }
+
+    function updateLedgerEntry() {
+        const id = Number(document.getElementById('editId').value);
+        const c = data.customers.find(x => x.id === id);
+        c.custNote = document.getElementById('editCustNote').value;
+        c.item = document.getElementById('editItemDesc').value;
+        c.itemNote = document.getElementById('editItemNote').value;
+        c.vara = Number(document.getElementById('editVara').value);
+        c.disc = Number(document.getElementById('editDisc').value);
+        c.extra = Number(document.getElementById('editExtra').value);
+        c.actionNote = document.getElementById('editActionNote').value;
+        const nJoma = Number(document.getElementById('addNewJoma').value);
+        if(nJoma > 0) c.jomaHistory.push({amt: nJoma, date: new Date().toLocaleDateString('en-GB')});
+        saveToLocal();
+        bootstrap.Modal.getInstance(document.getElementById('editLedgerModal')).hide();
+    }
+
+    function toggleDone(id) { 
+    const c = data.customers.find(x => x.id === id); 
+    if (c) {
+        // স্ট্যাটাস পরিবর্তন
+        c.status = (c.status === 'Done') ? 'Pending' : 'Done'; 
+        
+        // ১. ডাটা লোকাল স্টোরেজে সেভ করা
+        saveToLocal(); 
+        
+        // ২. টেবিলটি আপডেট করা (এটি যোগ করা খুব জরুরি)
+        renderTable(); 
+    }
+}
+
+   function printInv(id) {
+    const c = data.customers.find(x => x.id === id);
+    // যদি পেমেন্ট ক্লিয়ার না থাকে তবে ওয়ার্নিং (আপনি চাইলে এটি রাখতে বা সরাতে পারেন)
+    // if(c.status !== 'Done') { alert('সাকসেসফুলি পেমেন্ট ক্লিয়ার হলে "Done" ক্লিক করুন তারপর প্রিন্ট হবে।'); return; }
+
+    let totalJ = c.jomaHistory.reduce((s, h) => s + h.amt, 0);
+    let nBill = (c.vara + (c.extra || 0)) - (c.disc || 0);
+    let due = nBill - totalJ;
+
+    document.getElementById('printContent').innerHTML = `
+        <div class="row mb-3 mt-2">
+            <div class="col-6"><strong>ভাউচার নং:</strong> #${c.id}</div>
+            <div class="col-6 text-end"><strong>তারিখ:</strong> ${c.date}</div>
+        </div>
+        <div class="mb-4 p-2" style="background: #f8f9fa; border-left: 4px solid #001f3f;">
+            <strong>কাস্টমার নাম:</strong> ${c.name} <br>
+            <strong>ঠিকানা ও মোবাইল:</strong> ${c.info}
+        </div>
+        <table class="table table-bordered border-dark">
+            <thead style="background: #eee;">
+                <tr>
+                    <th style="width: 70%;">বিবরণ (মালামাল ও সার্ভিস)</th>
+                    <th class="text-end" style="width: 30%;">টাকার পরিমাণ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="min-height: 150px;">
+                        ${c.item} <br>
+                        <small class="text-muted">${c.custNote ? '('+c.custNote+')' : ''}</small>
+                    </td>
+                    <td class="text-end">
+                        ভাড়া: ${c.vara}৳ <br>
+                        এক্সট্রা: ${c.extra || 0}৳ <br>
+                        ডিসকাউন্ট: -${c.disc || 0}৳
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-end">সর্বমোট বিল</th>
+                    <th class="text-end">${nBill}৳</th>
+                </tr>
+                <tr>
+                    <td class="text-end">মোট জমা</td>
+                    <td class="text-end text-success font-weight-bold">${totalJ}৳</td>
+                </tr>
+                <tr style="font-size: 18px; background: #f8f9fa;">
+                    <th class="text-end">বকেয়া / বাকি</th>
+                    <th class="text-end text-danger">${due}৳</th>
+                </tr>
+            </tbody>
+        </table>
+    `;
+    window.print();
+}
+
+    function calculateStats(tIn, filterMonth) {
+        let tOut = data.expenses.filter(e => e.month === filterMonth).reduce((s, e) => s + e.amt, 0);
+        let net = tIn - tOut;
+        let pHead = net / 4;
+        document.getElementById('dashIn').innerText = tIn + "৳";
+        document.getElementById('dashOut').innerText = tOut + "৳";
+        document.getElementById('dashNet').innerText = net + "৳";
+        document.getElementById('dashShare').innerText = pHead.toFixed(0) + "৳";
+        initCharts(tIn, tOut, pHead);
+    }
+
+    function initCharts(inc, exp, share) {
+        const ctx1 = document.getElementById('incomeChart').getContext('2d');
+        if(incomeChart) incomeChart.destroy();
+        incomeChart = new Chart(ctx1, { type: 'pie', data: { labels: ['আয়', 'ব্যয়'], datasets: [{ data: [inc, exp], backgroundColor: ['#28a745', '#dc3545'] }] } });
+        const ctx2 = document.getElementById('shareChart').getContext('2d');
+        if(shareChart) shareChart.destroy();
+        shareChart = new Chart(ctx2, { type: 'bar', data: { labels: ['সোহেল', 'নাদিম', 'পার্টনার ৩', 'পার্টনার ৪'], datasets: [{ label: 'লাভ', data: [share, share, share, share], backgroundColor: '#6f42c1' }] } });
+    }
+
+    function renderExpenseTable() {
+        const filterM = document.getElementById('monthFilter').value;
+        const listB = document.getElementById('expenseListBody');
+        listB.innerHTML = '';
+        
+        // .slice(0, 5) কেটে দেওয়া হয়েছে যাতে সব ডাটা দেখায়
+        data.expenses.filter(e => e.month === filterM).reverse().forEach(e => {
+            listB.innerHTML += `<tr>
+                <td>${e.cat}</td>
+                <td>${e.amt}৳</td>
+                <td><button class="btn btn-sm btn-outline-danger p-0 px-1" onclick="deleteExpense(${e.id})">×</button></td>
+            </tr>`;
+        });
+    }
+
+
+function downloadBackup() {
+    // ১. ইনপুট থেকে মাসের ভ্যালু নেওয়া (যেমন: 2026-04)
+    const monthVal = document.getElementById('monthFilter').value;
+    
+    if (!monthVal) {
+        alert("অনুগ্রহ করে একটি মাস সিলেক্ট করুন।");
+        return;
+    }
+
+    // ২. মাসের নাম বের করা (যেমন: April)
+    const date = new Date(monthVal + "-01");
+    const monthName = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+
+    // ৩. পুরো ডাটাকে ফাইল আকারে তৈরি করা
+    const dataStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    // ৪. ফাইলটি ডাউনলোড করা
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${monthName}_${year}.json`; // ফাইলের নাম হবে April_2026.json
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+   // রিপোর্ট প্রিন্ট ফাংশন (নতুন ইমপ্লিমেন্টেড)
+    function printMonthlyReport() {
+        const filterMonth = document.getElementById('monthFilter').value;
+        if (!filterMonth) { alert("একটি মাস সিলেক্ট করুন।"); return; }
+
+        const monthData = data.customers.filter(c => c.date.startsWith(filterMonth));
+        const expenseData = data.expenses.filter(e => e.month === filterMonth);
+
+        let totalIncome = monthData.reduce((sum, c) => sum + c.jomaHistory.reduce((s, h) => s + h.amt, 0), 0);
+        let totalExpense = expenseData.reduce((sum, e) => sum + e.amt, 0);
+        let netProfit = totalIncome - totalExpense;
+
+        const printWin = window.open('', '_blank');
+        printWin.document.write(`
+            <html>
+            <head>
+                <title>Report - ${filterMonth}</title>
+                <style>
+                    body { font-family: 'Arial', sans-serif; padding: 20px; color: #333; }
+                    .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th, td { border: 1px solid #999; padding: 8px; text-align: center; font-size: 14px; }
+                    th { background-color: #f2f2f2; }
+                    .summary { margin-top: 30px; border: 2px solid #000; padding: 15px; background: #fafafa; width: 300px; float: right; }
+                    .summary p { margin: 5px 0; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h2>সোহেল সাউন্ড ও মোজাহের ডেকোরেটর</h2>
+                    <h4>মাসিক আয়-ব্যয় ও লাভ রিপোর্ট</h4>
+                    <p>মাস: ${filterMonth}</p>
+                </div>
+                
+                <h5>১. আয় / কাস্টমার লেজার তালিকা</h5>
+                <table>
+                    <thead><tr><th>SL</th><th>তারিখ</th><th>কাস্টমার</th><th>বিবরণ</th><th>ভাড়া</th><th>জমা</th></tr></thead>
+                    <tbody>${monthData.map((c, i) => `<tr><td>${i+1}</td><td>${c.date}</td><td>${c.name}</td><td>${c.item}</td><td>${c.vara}</td><td>${c.jomaHistory.reduce((s, h) => s + h.amt, 0)}</td></tr>`).join('')}</tbody>
+                </table>
+
+                <h5>২. ব্যয় / খরচ তালিকা</h5>
+                <table>
+                    <thead><tr><th>SL</th><th>খরচের খাত</th><th>টাকা</th></tr></thead>
+                    <tbody>${expenseData.map((e, i) => `<tr><td>${i+1}</td><td>${e.cat}</td><td>${e.amt}</td></tr>`).join('')}</tbody>
+                </table>
+
+                <div class="summary">
+                    <p>মোট আয়: ${totalIncome}৳</p>
+                    <p>মোট ব্যয়: ${totalExpense}৳</p>
+                    <hr>
+                    <p style="color: green;">নিট লাভ: ${netProfit}৳</p>
+                    <p>জনপ্রতি শেয়ার (৪ জন): ${(netProfit/4).toFixed(0)}৳</p>
+                </div>
+                <script>window.onload = function() { window.print(); window.close(); };<\/script>
+            </body>
+            </html>
+        `);
+        printWin.document.close();
+    }
+
+    
+
+
+// --- এই অংশটি আপনার স্ক্রিপ্টের শেষে বসান ---
+
+function calculateStats(tIn, filterMonth) {
+    // মাসিক খরচ ক্যালকুলেশন
+    let tOut = data.expenses.filter(e => e.month === filterMonth).reduce((s, e) => s + e.amt, 0);
+    let net = tIn - tOut;
+
+    // ড্যাশবোর্ড আপডেট
+    document.getElementById('dashIn').innerText = tIn + "৳";
+    document.getElementById('dashOut').innerText = tOut + "৳";
+    document.getElementById('dashNet').innerText = net + "৳";
+
+    // লভ্যাংশ ও পার্টনার রিপোর্ট আপডেট কল
+    updatePartnerReport(net);
+}
+
+function renderExpenseTable() {
+    const filterMonth = document.getElementById('monthFilter').value;
+    const list = document.getElementById('expenseListBody');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    data.expenses.filter(e => e.month === filterMonth).forEach(e => {
+        list.innerHTML += `<tr><td>${e.cat}</td><td>${e.amt}৳</td><td><button class="btn btn-sm text-danger" onclick="deleteExpense(${e.id})">✖</button></td></tr>`;
+    });
+}
+
+function deleteExpense(id) {
+    data.expenses = data.expenses.filter(e => e.id !== id);
+    saveToLocal();
+}
+
+function deleteCust(id) {
+    if(confirm("কাস্টমার ডাটা মুছে ফেলতে চান?")) {
+        data.customers = data.customers.filter(c => c.id !== id);
+        saveToLocal();
+    }
+}
+
+// ================= পার্টনার উত্তোলন ও লজিক সেকশন =================
+
+const partnerNames = ["সোহেল খান", "তানজিরুল ইসলাম নাদিম", "জিয়াউর রহমান", "জিল্লুর রহমান"];
+const partnerRoles = ["পরিচালক", "ম্যানেজার", "শেয়ারহোল্ডার", "শেয়ারহোল্ডার"];
+
+function saveWithdraw() {
+    if (!data.partnerWithdrawals) { data.partnerWithdrawals = []; }
+
+    const idx = document.getElementById('withdrawPartner').value;
+    const amt = parseFloat(document.getElementById('withdrawInput').value) || 0;
+    
+    if (amt <= 0) {
+        alert("সঠিক পরিমাণ লিখুন!");
+        return;
+    }
+
+    const newEntry = {
+        id: Date.now(),
+        name: partnerNames[idx],
+        amt: amt,
+        date: new Date().toISOString().split('T')[0] // আজকের তারিখ
+    };
+
+    data.partnerWithdrawals.push(newEntry);
+    saveToLocal(); // এটি লোকাল স্টোরেজে সেভ করে পুরো সিস্টেম রিফ্রেশ করবে
+    
+    document.getElementById('withdrawInput').value = '';
+    alert("উত্তোলন সফলভাবে এন্ট্রি হয়েছে!");
+}
+
+function updatePartnerReport(netProfit) {
+    if (!data.partnerWithdrawals) { data.partnerWithdrawals = []; }
+    
+    const filterMonth = document.getElementById('monthFilter').value;
+    const shareAmount = netProfit * 0.25; // জনপ্রতি ২৫% লাভ
+    
+    const reportBody = document.getElementById('partnerTableBody');
+    const ledgerBody = document.getElementById('withdrawLedgerBody');
+
+    if (reportBody) reportBody.innerHTML = '';
+    if (ledgerBody) ledgerBody.innerHTML = '';
+
+    // লভ্যাংশ রিপোর্ট টেবিল আপডেট
+    partnerNames.forEach((name, index) => {
+        const myWithdrawals = data.partnerWithdrawals.filter(w => 
+            w.name === name && w.date.startsWith(filterMonth)
+        );
+        const totalW = myWithdrawals.reduce((sum, w) => sum + w.amt, 0);
+        const netPayable = shareAmount - totalW;
+
+        if (reportBody) {
+            reportBody.innerHTML += `
+                <tr>
+                    <td class="text-start"><b>${name}</b><br><small class="text-muted">${partnerRoles[index]}</small></td>
+                    <td class="fw-bold">${shareAmount.toFixed(0)}৳</td>
+                    <td class="text-danger fw-bold">${totalW}৳</td>
+                    <td class="fw-bold ${netPayable >= 0 ? 'text-success' : 'text-danger'}">${netPayable.toFixed(0)}৳</td>
+                </tr>`;
+        }
+    });
+
+    // বিস্তারিত লেজার টেবিল (মাস ভিত্তিক সব এন্ট্রি)
+    const monthlyList = data.partnerWithdrawals.filter(w => w.date.startsWith(filterMonth));
+    if (ledgerBody) {
+        // নতুন এন্ট্রিগুলো আগে দেখানোর জন্য reverse করা হয়েছে
+        monthlyList.slice().reverse().forEach(w => {
+            ledgerBody.innerHTML += `
+                <tr>
+                    <td>${w.date}</td>
+                    <td><b>${w.name}</b></td>
+                    <td class="fw-bold text-danger">${w.amt}৳</td>
+                    <td>
+                        <button onclick="deleteWithdraw(${w.id})" class="btn btn-sm btn-outline-danger" style="font-size:10px; padding: 2px 5px;">মুছুন</button>
+                    </td>
+                </tr>`;
+        });
+    }
+    
+    if(document.getElementById('dashShare')) {
+        document.getElementById('dashShare').innerText = shareAmount.toFixed(0) + "৳";
+    }
+}
+
+function deleteWithdraw(id) {
+    if (confirm("এই উত্তোলনটি মুছে ফেলতে চান?")) {
+        data.partnerWithdrawals = data.partnerWithdrawals.filter(w => w.id !== id);
+        saveToLocal();
+    }
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+}
+
+function downloadBackup() {
+    const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `sohel_sound_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+}
+
+// মূল ফাংশন যা সবকিছু কন্ট্রোল করে
+function loadSystem() {
+    const filterMonth = document.getElementById('monthFilter').value || new Date().toISOString().slice(0, 7);
+    document.getElementById('monthFilter').value = filterMonth;
+    renderTable(); // এটি অটোমেটিক calculateStats কে কল করবে
+}
+
+// শুরুতে সিস্টেম চালু করা
+loadSystem();
+
+
+
+
+
+
+    
+    function deleteCust(id) { if(confirm('ডিলিট করবেন?')) { data.customers = data.customers.filter(x => x.id !== id); saveToLocal(); } }
+    function deleteExpense(id) { if(confirm('মুছে ফেলবেন?')) { data.expenses = data.expenses.filter(x => x.id !== id); saveToLocal(); } }
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+    function exportData() { const blob = new Blob([JSON.stringify(data)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup.json`; a.click(); }
+    function loadSystem() { if(!document.getElementById('monthFilter').value) document.getElementById('monthFilter').value = new Date().toISOString().slice(0, 7); renderTable(); }
+
+    window.onload = loadSystem;
+</script>
+</body>
+</html>
